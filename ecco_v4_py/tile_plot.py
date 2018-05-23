@@ -5,7 +5,7 @@ Created on Mon Jul  3 16:11:15 2017
 
 @author: ifenty
 """
-from __future__ import division
+
 import numpy as np
 import matplotlib.pylab as plt
 import xarray as xr
@@ -57,7 +57,7 @@ def plot_tile(tile, cmap='jet', **kwargs):
         elif key == "cmax":
             cmax =  kwargs[key]
         else:
-            print "unrecognized argument ", key 
+            print("unrecognized argument ", key) 
     #%%
        
     plt.imshow(tile, vmin=cmin, vmax=cmax, cmap=cmap, 
@@ -132,7 +132,7 @@ def plot_tiles(tiles,  **kwargs):
         elif key == "rotate_to_latlon":
             rotate_to_latlon = kwargs[key]
         else:
-            print "unrecognized argument ", key 
+            print("unrecognized argument ", key) 
                
 
     if layout == 'latlon':
@@ -172,7 +172,7 @@ def plot_tiles(tiles,  **kwargs):
                 elif aca == 11:# plot in 4th position, column 4
                     tile_order_top_row = [-1, -1, -1, 7]
                 else:
-                    print 'Arctic Cap Alignment is not one of 3, 6, 8, 11.'
+                    print('Arctic Cap Alignment is not one of 3, 6, 8, 11.')
                         
         # the order of the rest of the tile is fixed.  four columns each with 
         # three rows.
@@ -223,13 +223,13 @@ def plot_tiles(tiles,  **kwargs):
                     
             else:
                 # make sure we have this tile in the array
-                print ' we have a DataArray'
-                print tiles.tile
+                print(' we have a DataArray')
+                print(tiles.tile)
                 if cur_tile_num in tiles.tile.values:
                     have_tile = True
                     cur_tile = tiles.sel(tile=cur_tile_num)
                     
-            print cur_tile_num, have_tile
+            print(cur_tile_num, have_tile)
             if have_tile:
                 if (layout == 'latlon' and rotate_to_latlon and 
                     cur_tile_num >7):
@@ -305,7 +305,7 @@ def plot_tiles_proj(lons, lats, data,
         elif key == "cmax":
             cmax =  kwargs[key]
         else:
-            print "unrecognized argument ", key     
+            print("unrecognized argument ", key)     
 
     #%%
     if type(lons) == xr.core.dataarray.DataArray:
@@ -316,9 +316,9 @@ def plot_tiles_proj(lons, lats, data,
         lons_1d = lons.reshape(np.product(lons.shape))
         lats_1d = lats.reshape(np.product(lats.shape) )       
     else:
-        print 'lons and lats variable either a DataArray or numpy.ndarray'
-        print 'lons found type ', type(lons)
-        print 'lats found type ', type(lats)        
+        print('lons and lats variable either a DataArray or numpy.ndarray')
+        print('lons found type ', type(lons))
+        print('lats found type ', type(lats))        
         return
     
     if type(data) == xr.core.dataarray.DataArray:
@@ -326,8 +326,8 @@ def plot_tiles_proj(lons, lats, data,
 
 
     elif type(data) != np.ndarray:
-        print 'data must be either a DataArray or ndarray type \n'
-        print 'found type ', type(data)
+        print('data must be either a DataArray or ndarray type \n')
+        print('found type ', type(data))
         return
 
     #%%
@@ -350,7 +350,7 @@ def plot_tiles_proj(lons, lats, data,
         B_right_limit = 180
         center_lon = 0
     else:
-        print 'invalid starting longitude'
+        print('invalid starting longitude')
         #return
 
     # the number of degrees spanned in part A and part B
@@ -389,16 +389,16 @@ def plot_tiles_proj(lons, lats, data,
                           lon_0=user_lon_0, resolution=map_resolution)
     else:
         raise ValueError('projection type must be either "cyl", "robin", or "stereo"')
-        print 'found ', projection_type
+        print('found ', projection_type)
     
     #%%
     # get a reference to the current figure (or make a figure if none exists)
     if background_type == 'bm':
         map.bluemarble()
-        print 'blue marble'
+        print('blue marble')
     elif background_type == 'sr':
         map.shadedrelief()
-        print 'shaded relief'        
+        print('shaded relief')        
     elif background_type == 'fc':
         map.fillcontinents(color='lightgray',lake_color='lightgray')  
         pass
@@ -414,7 +414,7 @@ def plot_tiles_proj(lons, lats, data,
     map.drawcoastlines(linewidth=1)
 
     # loop through both parts (if they exist), do interpolation and plot
-    for key, lon_tmp in lon_tmp_d.iteritems():
+    for key, lon_tmp in lon_tmp_d.items():
 
         #%%
         new_grid_lon, new_grid_lat = np.meshgrid(lon_tmp, lat_tmp)
@@ -424,7 +424,7 @@ def plot_tiles_proj(lons, lats, data,
         new_grid  = pr.geometry.GridDefinition(lons=new_grid_lon, 
                                                lats=new_grid_lat)
         
-        x,y = map(new_grid_lon, new_grid_lat) 
+        x,y = list(map(new_grid_lon, new_grid_lat)) 
     
         data_latlon_projection = \
             pr.kd_tree.resample_nearest(orig_grid, data, new_grid, 
@@ -446,8 +446,8 @@ def plot_tiles_proj(lons, lats, data,
                          vmin=cmin, vmax=cmax, cmap=cmap, 
                          levels=contour_levels, extend="both")
         else:
-            print 'plot type must be either "pcolor" or "contourf"  '
-            print 'found type ', plot_type
+            print('plot type must be either "pcolor" or "contourf"  ')
+            print('found type ', plot_type)
             #return
         
            

@@ -8,7 +8,7 @@ This module includes utility routines for loading binary files in the llc 13-til
    https://github.com/ECCO-GROUP/ECCOv4-py
 """
 
-from __future__ import division
+
 import numpy as np
 import matplotlib.pylab as plt
 import xarray as xr
@@ -56,7 +56,7 @@ def load_llc_mds(fdir, fname, llc, skip=0, nk=1, filetype = '>f',
     
     datafile = fdir + '/' + fname
     
-    print 'loading ' + fname
+    print('loading ' + fname)
     
         # check to see if file exists.    
     file = glob.glob(datafile)

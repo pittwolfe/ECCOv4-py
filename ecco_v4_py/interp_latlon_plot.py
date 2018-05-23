@@ -5,7 +5,7 @@ Created on Thu Feb  8 11:01:48 2018
 
 @author: ifenty
 """
-from __future__ import division
+
 import numpy as np
 import matplotlib.pylab as plt
 import xarray as xr
@@ -24,20 +24,20 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
     if type(lons) == xr.DataArray:
         lons = lons.values
     elif type(lons) != np.ndarray:
-        print 'lons must be either a DataArray or ndarray type \n'
-        print 'found type ', type(lons)
+        print('lons must be either a DataArray or ndarray type \n')
+        print('found type ', type(lons))
 
     if type(lats) == xr.DataArray:
         lats = lats.values
     elif type(lats) != np.ndarray:
-        print 'lats must be either a DataArray or ndarray type \n'
-        print 'found type ', type(lats)
+        print('lats must be either a DataArray or ndarray type \n')
+        print('found type ', type(lats))
         
     if type(data) == xr.DataArray:
         data = data.values
     elif type(data) != np.ndarray:
-        print 'data must be either a DataArray or ndarray type \n'
-        print 'found type ', type(data)
+        print('data must be either a DataArray or ndarray type \n')
+        print('found type ', type(data))
 
     # default projection type
     projection_type = 'robin'
@@ -91,7 +91,7 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
         elif key == "background_type":
             background_type = kwargs[key]
         else:
-            print "unrecognized argument ", key     
+            print("unrecognized argument ", key)     
 
     #%%
     # To avoid plotting problems around the date line, lon=180E, -180W 
@@ -124,9 +124,9 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
         idx_BL = np.searchsorted(tmpB,B_left_limit, side="left")
         idx_BR = np.searchsorted(tmpB,B_right_limit, side="left")
 
-        print idx_AL, idx_AR, idx_BL, idx_BR
+        print(idx_AL, idx_AR, idx_BL, idx_BR)
     else:
-        print 'invalid starting longitude'
+        print('invalid starting longitude')
         #return
 
     
@@ -141,8 +141,8 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
         map = Basemap(projection='robin',lon_0=center_lon, resolution='c')
 
     else:
-        print 'projection type must be either "cyl" or "robin" '  
-        print 'found ', projection_type
+        print('projection type must be either "cyl" or "robin" ')  
+        print('found ', projection_type)
         #return
     
     #%%
@@ -151,16 +151,16 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
 
     if background_type == 'bm':
         map.bluemarble()
-        print 'blue marble'
+        print('blue marble')
     elif background_type == 'sr':
         map.shadedrelief()
-        print 'shaded relief'        
+        print('shaded relief')        
     elif background_type == 'fc':
         map.fillcontinents(color='lightgray',lake_color='lightgray')  
-        print 'gray background'                
+        print('gray background')                
 
-    x,y = map(lons, lats) 
-    xb,yb = map(lons+360, lats) 
+    x,y = list(map(lons, lats)) 
+    xb,yb = list(map(lons+360, lats)) 
     
     #%%
     if plot_type == 'pcolor':
@@ -199,8 +199,8 @@ def plot_latlon_interp_proj(lons, lats, data,  **kwargs):
                             vmin=cmin, vmax=cmax, cmap=user_cmap, 
                             levels=contour_levels, extend="both")
     else:
-        print 'plot type must be either "pcolor" or "contourf"  '
-        print 'found type ', plot_type
+        print('plot type must be either "pcolor" or "contourf"  ')
+        print('found type ', plot_type)
         #return
         
     #%%
@@ -246,20 +246,20 @@ def plot_latlon_interp(lons, lats, data,  **kwargs):
     if type(lons) == xr.DataArray:
         lons = lons.values
     elif type(lons) != np.ndarray:
-        print 'lons must be either a DataArray or ndarray type \n'
-        print 'found type ', type(lons)
+        print('lons must be either a DataArray or ndarray type \n')
+        print('found type ', type(lons))
 
     if type(lats) == xr.DataArray:
         lats = lats.values
     elif type(lats) != np.ndarray:
-        print 'lats must be either a DataArray or ndarray type \n'
-        print 'found type ', type(lats)
+        print('lats must be either a DataArray or ndarray type \n')
+        print('found type ', type(lats))
         
     if type(data) == xr.DataArray:
         data = data.values
     elif type(data) != np.ndarray:
-        print 'data must be either a DataArray or ndarray type \n'
-        print 'found type ', type(data)
+        print('data must be either a DataArray or ndarray type \n')
+        print('found type ', type(data))
 
 
     # by default use jet colormap
@@ -299,7 +299,7 @@ def plot_latlon_interp(lons, lats, data,  **kwargs):
         elif key == "num_levels":
             num_levels =  kwargs[key]
         else:
-            print "unrecognized argument ", key     
+            print("unrecognized argument ", key)     
 
     #%%
     # get a reference to the current figure (or make a figure if none exists)
@@ -323,8 +323,8 @@ def plot_latlon_interp(lons, lats, data,  **kwargs):
                      levels=contour_levels, extend="both")
         
     else:
-        print 'plot type must be either "pcolor" or "contourf"  '
-        print 'found type ', plot_type
+        print('plot type must be either "pcolor" or "contourf"  ')
+        print('found type ', plot_type)
         #return
         
   
