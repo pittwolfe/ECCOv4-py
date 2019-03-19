@@ -10,19 +10,161 @@ This module includes utility routines for loading binary files in the llc 13-til
 
 
 import numpy as np
+<<<<<<< HEAD
 import matplotlib.pylab as plt
 import xarray as xr
 import time
 from copy import deepcopy
 import os
+=======
+>>>>>>> master
 import glob
 
+from llc_array_conversion  import llc_compact_to_tiles
+from llc_array_conversion  import llc_compact_to_faces
+from llc_array_conversion  import llc_faces_to_tiles
+from llc_array_conversion  import llc_faces_to_compact
+from llc_array_conversion  import llc_tiles_to_faces
+from llc_array_conversion  import llc_tiles_to_compact
+
 #%%
-def load_llc_mds(fdir, fname, llc, skip=0, nk=1, filetype = '>f',
-                 less_output = False ):
+def load_binary_array(fdir, fname, ni, nj, nk=1, nl=1, skip=0,
+                      filetype = '>f', less_output = False ):
     """
 
-    This routine loads a single 2D binary file in the llc layout
+    Loads a binary array from a file.  The first two dimensions
+    of the array have length ni and nj, respectively.  The array is comprised
+    of one or more 2D 'slices' of dimension ni x nj.  The number of 2D slices
+    to read is 'nk'.  nk is not necessarily the length of the third dimension
+    of the file.  The 'skip' parameter specifies the number of 2D slices
+    to skip over before reading the nk number of 2D slices.  nk can be 1.
+
+    Parameters
+    ----------
+    fdir : string
+        A string with the directory of the binary file to open
+    fname : string
+        A string with the name of the binary file to open
+    ni,nj : int
+        the length of each array dimension.  ni, nj must be > 0
+    skip : int
+        the number of 2D (nj x ni) slices to skip.
+        Default: 0
+    nk : int
+        number of 2D slices (or records) to load in the third dimension.
+        if nk = -1, load all 2D slices
+        Default: 1 [singleton]
+    nl : int
+        number of 2D slices (or records) to load in the fourth dimension.
+        Default: 1 [singleton]
+    filetype: string
+        the file type, default is big endian (>) 32 bit float (f)
+        alternatively, ('<d') would be little endian (<) 64 bit float (d)
+        Default '>f'
+    less_output : boolean
+        A debugging flag.  False = less debugging output
+        Default: False
+
+    Returns
+    -------
+    data
+        a numpy array with dimensions nl x nk x nj x ni
+
+    Raises
+    ------
+    IOError
+        If the file is not found
+
+    """
+    datafile = fdir + '/' + fname
+
+    if less_output == False:
+        print 'loading ' + fname
+
+    # check to see if file exists.
+    file = glob.glob(datafile)
+    if len(file) == 0:
+        raise IOError(fname + ' not found ')
+
+    f = open(datafile, 'rb')
+    dt = np.dtype(filetype)
+
+    if skip > 0:
+        # skip ahead 'skip' number of 2D slices
+        f.seek(ni*nj*skip*dt.itemsize)
+
+    if (ni <= 0) or (nj <= 0):
+        print ('ni and nj must be > 1')
+        return []
+
+    # load all 2D records
+    if nk == -1:
+        # nl can only be 1 if we use nk = -1
+        nl = 1
+        # read all 2D records
+        arr_k = np.fromfile(f, dtype=filetype, count=-1)
+        # find the number of 2D records (nk)
+        length_arr_k = len(arr_k)
+
+        # length of each 2D slice is ni * nj
+        nk = int(length_arr_k / (ni*nj))
+
+        if less_output == False:
+            print ('loading all 2D records.  nk =',nk)
+
+        # reshape the array to 2D records
+        if nk > 1: # we have more than one 2D record, make 3D field
+            data = np.reshape(arr_k,(nk, nj, ni))
+
+        else: # nk = 1, just make 2D field
+            data = np.reshape(arr_k,(nj, ni))
+
+    # read a specific number of records (nk*nl)
+    else:
+        if (nk <= 0) or (nl <= 0):
+            print('nk and nl must be > 0.  If they are singleton dimensions, use 1')
+            return []
+
+        # read in nk*nl 2D records
+        arr_k = np.fromfile(f, dtype=filetype, count=ni*nj*nk*nl)
+
+        # put data into 2D records
+        #  - if we have a fourth dimension
+        if nl > 1:
+            data = np.reshape(arr_k,(nl, nk, nj, ni))
+
+        #  - if we have a third dimension
+        elif nk > 1:
+            data = np.reshape(arr_k,(nk, nj, ni))
+
+        #  - if we only have two dimensions
+        else:
+            data = np.reshape(arr_k,(nj, ni))
+
+    f.close()
+
+
+    if less_output == False:
+        print ('data shape ', data.shape)
+
+    return data
+
+
+
+
+#%%
+def load_llc_compact(fdir, fname, llc=90, skip=0, nk=1, nl=1,
+            filetype = '>f', less_output = False ):
+    """
+
+    Loads an MITgcm binary file in the 'compact' format of the
+    lat-lon-cap (LLC) grids.
+
+    Data in the compact format should have dimensions:
+    nl x nk x 13*llc x llc
+
+    If dimensions nl or nk are singular, they are not included
+    as dimensions in the compact array
 
     Parameters
     ----------
@@ -31,126 +173,150 @@ def load_llc_mds(fdir, fname, llc, skip=0, nk=1, filetype = '>f',
     fname : string
         A string with the name of the binary file to open
     llc : int
-        the size of the llc grid.  For ECCO v4, we use the llc90 domain so `llc` would be `90`
+        the size of the llc grid.  For ECCO v4, we use the llc90 domain
+        so `llc` would be `90`.
+        Default: 90
     skip : int
-        the number of 2D records to skip.  Records could be vertical levels of a 3D field, or different 2D fields, or both.
+        the number of 2D slices (or records) to skip.  Records could
+        be vertical levels of a 3D field, or different 2D fields, or both.
+        Default: 0
     nk : int
-        number of 2D records to load.
+        number of 2D slices (or records) to load in the third dimension.
+        if nk = -1, load all 2D slices
+        Default: 1 [singleton]
+    nl : int
+        number of 2D slices (or records) to load in the fourth dimension.
+        Default: 1 [singleton]
+    filetype: string
+        the file type, default is big endian (>) 32 bit float (f)
+        alternatively, ('<d') would be little endian (<) 64 bit float (d)
+        Deafult '>f'
+    less_output : boolean
+        A debugging flag.  False = less debugging output
+        Default: False
+
+    Returns
+    -------
+    data_compact
+        a numpy array of dimension nl x nk x llc x llc
+
+    """
+
+    data_compact = load_binary_array(fdir, fname, llc, 13*llc, nk=nk, nl=nl,
+                    skip=skip, filetype = filetype, less_output = less_output)
+
+    # return the array
+    return data_compact
+
+
+
+#%%
+def load_llc_compact_to_faces(fdir, fname, llc=90, skip=0, nk=1, nl=1,
+        filetype = '>f', less_output = False):
+    """
+
+    Loads an MITgcm binary file in the 'compact' format of the
+    lat-lon-cap (LLC) grids and converts it to the '5 faces' format
+    of the LLC grids.
+
+    Can load 2D and 3D arrays.
+
+    Parameters
+    ----------
+    fdir : string
+        A string with the directory of the binary file to open
+    fname : string
+        A string with the name of the binary file to open
+    llc : int
+        the size of the llc grid.  For ECCO v4, we use the llc90 domain
+        so `llc` would be `90`.
+        Default: 90
+    skip : int
+        the number of 2D slices (or records) to skip.  Records could be
+        vertical levels of a 3D field, or different 2D fields, or both.
+    nk : int
+        number of 2D slices (or records) to load in the third dimension.
+        if nk = -1, load all 2D slices
+        Default: 1 [singleton]
+    nl : int
+        number of 2D slices (or records) to load in the fourth dimension.
+        Default: 1 [singleton]
     filetype: string
         the file type, default is big endian (>) 32 bit float (f)
         alternatively, ('<d') would be little endian (<) 64 bit float (d)
     less_output : boolean
-        a debug flag.  True means print more to the screen, False means be
-        quieter.  Default False
+        A debugging flag.  False = less debugging output
+        Default: False
 
     Returns
     -------
-    ndarray
-        the binary file contents organized into a llc x llc x 13 x nk `ndarray`, one llc x llc array for each of the 13 tiles
+    F : a dictionary containing the five lat-lon-cap faces
+        F[n] is a numpy array of face n, n in [1..5]
 
-    Raises
-    ------
-    IOError
-        If the file is not found
+    - dimensions of each 2D slice of F
+        f1,f2: 3*llc x llc
+           f3: llc x llc
+        f4,f5: llc x 3*llc
 
     """
 
-    # use os.path.join to make sure the directory separators are inserted correctly
-    datafile = os.path.join(fdir, fname)
+    data_compact = load_llc_compact(fdir, fname, llc=llc, skip=skip, nk=nk, nl=nl,
+        filetype = filetype, less_output=less_output)
 
-    print('loading ' + fname)
+    F = llc_compact_to_faces(data_compact, less_output = less_output)
 
-        # check to see if file exists.
-    file = glob.glob(datafile)
-    if len(file) == 0:
-        raise IOError(fname + ' not found ')
+    return F
 
-    f = open(datafile, 'rb')
-    dt = np.dtype(filetype)
-    f.seek(llc*llc*13*skip*dt.itemsize)
 
-    arr_k = np.fromfile(f, dtype=filetype,
-                        count=llc*llc*13*nk)
+#%%
+def load_llc_compact_to_tiles(fdir, fname, llc=90, skip=0, nk=1, nl=1,
+                filetype = '>f', less_output = False,
+                third_dimension = 'time', fourth_dimension = 'depth'):
+    """
 
-    f.close()
+    Loads an MITgcm binary file in the 'compact' format of the
+    lat-lon-cap (LLC) grids and converts it to the '13 tiles' format
+    of the LLC grids.
 
-    arr_tiles_k = np.zeros((13, llc, llc, nk))
+    Parameters
+    ----------
+    fdir : string
+        A string with the directory of the binary file to open
+    fname : string
+        A string with the name of the binary file to open
+    llc : int
+        the size of the llc grid.  For ECCO v4, we use the llc90 domain
+        so `llc` would be `90`.
+        Default: 90
+    skip : int
+        the number of 2D slices (or records) to skip.  Records could be vertical levels of a 3D field, or different 2D fields, or both.
+    nk : int
+        number of 2D slices (or records) to load in the third dimension.
+        if nk = -1, load all 2D slices
+        Default: 1 [singleton]
+    nl : int
+        number of 2D slices (or records) to load in the fourth dimension.
+        Default: 1 [singleton]
+    filetype: string
+        the file type, default is big endian (>) 32 bit float (f)
+        alternatively, ('<d') would be little endian (<) 64 bit float (d)
+    less_output : boolean
+        A debugging flag.  False = less debugging output
+        Default: False
 
-    #%%
-    len_rec = 13*llc*llc
-    for k in  range(nk):
+    Returns
+    -------
+    data_tiles
+        a numpy array of dimension 13 x nl x nk x llc x llc, one llc x llc array
+        for each of the 13 tiles and nl and nk levels.
 
-        tmp = arr_k[len_rec*(k):len_rec*(k+1)]
-        arr = np.reshape(tmp,(13*llc, llc))
+    """
 
-        f1 = arr[:3*llc,:]
-        f2 = arr[3*llc:6*llc,:]
-        f3 = arr[6*llc:7*llc,:]
+    data_compact = load_llc_compact(fdir, fname, llc=llc, skip=skip, nk=nk, nl=nl,
+        filetype = filetype, less_output=less_output)
 
-        f4 = np.zeros((llc, 3*llc))
+    data_tiles   = llc_compact_to_tiles(data_compact, less_output=less_output)
 
-        for f in range(8,11):
-            i1 = np.arange(0, llc)+(f-8)*llc
-            i2 = np.arange(0,3*llc,3) + 7*llc + f -8
-            f4[:,i1] = arr[i2,:]
 
-        f5 = np.zeros((llc, 3*llc))
-
-        for f in range(11,14):
-            i1 = np.arange(0, llc)+(f-11)*llc
-            i2 = np.arange(0,3*llc,3) + 10*llc + f -11
-            f5[:,i1] = arr[i2,:]
-
-        if 1 == 0:
-            plt.close('all')
-            plt.imshow(f1, origin='lower')
-            plt.figure()
-            plt.imshow(f2, origin='lower')
-            plt.show()
-
-            plt.figure()
-            plt.imshow(f3, origin='lower')
-            plt.show()
-
-            plt.figure()
-            plt.imshow(f4, origin='lower')
-            plt.show()
-
-            plt.figure()
-            plt.imshow(f5, origin='lower')
-            plt.show()
-
-        arr_tiles = np.zeros((13, llc, llc))
-
-        arr_tiles[0,:] = f1[llc*0:llc*1,:]
-        arr_tiles[1,:] = f1[llc*1:llc*2,:]
-        arr_tiles[2,:] = f1[llc*2:,:]
-
-        arr_tiles[3,:] = f2[llc*0:llc*1,:]
-        arr_tiles[4,:] = f2[llc*1:llc*2,:]
-        arr_tiles[5,:] = f2[llc*2:,:]
-
-        arr_tiles[6,:] = f3
-
-        arr_tiles[7,:] = f4[:,llc*0:llc*1]
-        arr_tiles[8,:] = f4[:,llc*1:llc*2]
-        arr_tiles[9,:] = f4[:,llc*2:]
-
-        arr_tiles[10,:] = f5[:,llc*0:llc*1]
-        arr_tiles[11,:] = f5[:,llc*1:llc*2]
-        arr_tiles[12,:] = f5[:,llc*2:]
-
-        if 1 == 0:
-            plt.figure()
-            plt.imshow(arr_tiles[0], origin='lower')
-            plt.figure()
-            plt.imshow(arr_tiles[1], origin='lower')
-            plt.figure()
-            plt.imshow(arr_tiles[2], origin='lower')
-
-        arr_tiles_k[:,:,:,k] = arr_tiles
-
-    if nk == 1:
-        arr_tiles_k = arr_tiles_k[:,:,:,0]
-
-    return arr_tiles_k
+    # return the array
+    return data_tiles
