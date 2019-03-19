@@ -10,14 +10,6 @@ This module includes utility routines for loading binary files in the llc 13-til
 
 
 import numpy as np
-<<<<<<< HEAD
-import matplotlib.pylab as plt
-import xarray as xr
-import time
-from copy import deepcopy
-import os
-=======
->>>>>>> master
 import glob
 
 from llc_array_conversion  import llc_compact_to_tiles
