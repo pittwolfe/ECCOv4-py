@@ -7,6 +7,7 @@ This module includes utility routines adding halos to individual llc tiles array
 .. _ecco_v4_py Documentation :
    https://github.com/ECCO-GROUP/ECCOv4-py
 """
+from __future__ import print_function
 
 import numpy as np
 import xarray as xr
@@ -388,7 +389,7 @@ def add_borders_to_DataArray_V_points(da_u, da_v):
                         
                  # if we do not have the da_u tile, then we can't append!
                 else:
-                   print('we do not have da_u tile ', top_tile_index)
+                   print(('we do not have da_u tile ', top_tile_index))
 
             # the values to append to the top come from another da_v tile
             else:
@@ -410,11 +411,11 @@ def add_borders_to_DataArray_V_points(da_u, da_v):
                        # print 'tile to the top cannot be tile_index'
                 # we do not have the required da_v tile.
                 else:
-                    print('we do not have da_v tile ', top_tile_index)
+                    print(('we do not have da_v tile ', top_tile_index))
 
         # there is no tile to the top 
         else:
-            print('there is no tile to the top of da_v tile ', tile_index)
+            print(('there is no tile to the top of da_v tile ', tile_index))
 
         # if we have found a tile to the top we can do the appending
         if append_border:
@@ -598,7 +599,7 @@ def add_borders_to_DataArray_U_points(da_u, da_v):
                         
                 # if we do not have the da_v tile, then we can't append!
                 else:
-                    print('we do not have da_v tile ', right_tile_index)
+                    print(('we do not have da_v tile ', right_tile_index))
 
             # the values to append to the top come from another da_u tile
             else:
@@ -620,7 +621,7 @@ def add_borders_to_DataArray_U_points(da_u, da_v):
                         print('tile to the right cannot be tile_index')
                 # we do not have the required da_u tile.
                 else:
-                    print('we do not have da_u tile ', right_tile_index)
+                    print(('we do not have da_u tile ', right_tile_index))
 
         # there is no tile to the right 
         #else:

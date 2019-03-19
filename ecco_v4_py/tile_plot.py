@@ -5,7 +5,11 @@ Created on Mon Jul  3 16:11:15 2017
 
 @author: ifenty
 """
+from __future__ import print_function
+from __future__ import division
 
+from builtins import str
+from past.utils import old_div
 import numpy as np
 import matplotlib.pylab as plt
 import xarray as xr
@@ -48,7 +52,7 @@ def plot_tile(tile, cmap='jet', **kwargs):
         elif key == "cmax":
             cmax =  kwargs[key]
         else:
-            print("unrecognized argument ", key)
+            print(("unrecognized argument ", key))
     #%%
 
     plt.imshow(tile, vmin=cmin, vmax=cmax, cmap=cmap,
@@ -151,7 +155,7 @@ def plot_tiles(tiles,  **kwargs):
         elif key == 'Arctic_Align':
             aca = kwargs[key]
         else:
-            print "unrecognized argument ", key
+            print("unrecognized argument ", key)
 
     # see if aca is one of four valid values
     if len(np.intersect1d([3,6,8,11],aca)) > 0:
@@ -166,7 +170,7 @@ def plot_tiles(tiles,  **kwargs):
             tile_order_top_row = [-1, -1, -1, 7]
     else:
         # if not, set it to be 6.
-        print 'Arctic Cap Alignment is not one of 3, 6, 8, 11, using 3'
+        print('Arctic Cap Alignment is not one of 3, 6, 8, 11, using 3')
         aca  = 3
 
 
@@ -174,7 +178,7 @@ def plot_tiles(tiles,  **kwargs):
     #    print 'Arctic_Align only makes sense with the lat-lon layout'
 
     if layout == 'llc' and rotate_to_latlon == True:
-        print 'note: rotate_to_latlon only applies when layout="latlon" '
+        print('note: rotate_to_latlon only applies when layout="latlon" ')
 
     if layout == 'latlon':
 
@@ -241,7 +245,7 @@ def plot_tiles(tiles,  **kwargs):
                 if (layout == 'latlon' and rotate_to_latlon and cur_tile_num == 7):
                     if aca == 3:
                         cur_tile = np.rot90(cur_tile,-1)
-                        print 'here'
+                        print('here')
                     elif aca == 8:
                         cur_tile = np.rot90(cur_tile,-3)
                     elif aca == 11:
@@ -274,7 +278,7 @@ def plot_tiles(tiles,  **kwargs):
 
         #[left, bottom, width, height]
         h=.6;w=.025
-        cbar_ax = f.add_axes([0.85, (1-h)/2, w, h])
+        cbar_ax = f.add_axes([0.85, old_div((1-h),2), w, h])
         cbar = f.colorbar(im, cax=cbar_ax)#, format='%.0e')
         if show_cbar_label:
             cbar.set_label(cbar_label)

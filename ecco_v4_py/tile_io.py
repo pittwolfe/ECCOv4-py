@@ -5,7 +5,10 @@ Created on Mon Jul  3 16:11:15 2017
 
 @author: ifenty
 """
+from __future__ import print_function
 
+from builtins import str
+from builtins import range
 import numpy as np
 import xarray as xr
 import time
@@ -88,12 +91,12 @@ def load_subset_tiles_from_netcdf(data_dir, var, var_type,
             ds_tile = []
         else:
             if less_output == False:
-                print('skipping this tile, not on the list ', tile_index)
+                print(('skipping this tile, not on the list ', tile_index))
 
     end = time.time()
 
     if less_output == False:
-        print('total file load and concat time ', end-start, 's')
+        print(('total file load and concat time ', end-start, 's'))
 
     return ds
 
@@ -459,7 +462,7 @@ def load_tile_from_netcdf(data_dir, var, var_type, tile_index,
     # 'grid_layout' = 'original llc' to indicate that the tile has not yet
     # been rotated
 
-    for key, value in ds.variables.items():
+    for key, value in list(ds.variables.items()):
         if key not in ds.coords and len(ds[key].shape) >= 2:
             ds.variables[key].attrs['grid_layout'] = 'original llc'
 

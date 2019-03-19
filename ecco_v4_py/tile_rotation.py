@@ -5,7 +5,10 @@ Created on Mon Jul  3 16:11:15 2017
 
 @author: ifenty
 """
+from __future__ import print_function
 
+from builtins import str
+from builtins import range
 import numpy as np
 import xarray as xr
 from copy import deepcopy
@@ -42,7 +45,7 @@ def reorient_13_tile_GRID_Dataset_to_latlon_layout(gds, **kwargs):
 
     ds_CG_r = reorient_13_tile_Dataset_to_latlon_layout_CG_points(ds_CG, **kwargs)
 
-    for key, value in ds_CG_r.variables.items():
+    for key, value in list(ds_CG_r.variables.items()):
         if key not in ds_CG_r.coords:
             ds_CG_r.variables[key].attrs['Arctic_Align'] = aca
 
@@ -63,7 +66,7 @@ def reorient_13_tile_GRID_Dataset_to_latlon_layout(gds, **kwargs):
     # merge the rotated Datasets on the C, G, U and V points.
     gds_r = xr.merge([ds_CG_r, ds_U_r, ds_V_r])
     
-    for key, value in gds_r.variables.items():
+    for key, value in list(gds_r.variables.items()):
         if key not in gds_r.coords:
             gds_r.variables[key].attrs['Arctic_Align'] = aca
             gds_r.variables[key].attrs['grid_layout'] = 'rotated llc' 
@@ -162,12 +165,12 @@ def reorient_13_tile_Dataset_to_latlon_layout_CG_points(ds, **kwargs):
                 ds_all = xr.concat([ds_all, cur_ds],'tile')
 
         else:
-            print('Tile not present in Dataset ', cur_tile)
+            print(('Tile not present in Dataset ', cur_tile))
             
     # Give the new Dataset the same metadata as the original Dataset.
     ds_all.attrs = attrs
 
-    for key, value in ds_all.variables.items():
+    for key, value in list(ds_all.variables.items()):
         if key not in ds_all.coords:
             ds_all.variables[key].attrs['Arctic_Align'] = aca 
             ds_all.variables[key].attrs['grid_layout'] = 'rotated llc'
@@ -210,7 +213,7 @@ def rotate_single_tile_Dataset_CG_points(ds, **kwargs):
         
     # loop through each variable in the Dataset and select out for rotation 
     # only those variables that are not coordinates
-    for key, value in ds.variables.items():
+    for key, value in list(ds.variables.items()):
         if key not in ds.coords:
             
             # pull out the variable from the Dataset.  A single variable from
@@ -394,19 +397,19 @@ def reorient_13_tile_Dataset_to_latlon_layout_UV_points(ds_U, ds_V, **kwargs):
                 ds_U_all = xr.concat([ds_U_all, cur_ds_U],'tile')
                 ds_V_all = xr.concat([ds_V_all, cur_ds_V],'tile')            
         else:
-            print("Tile not included in Dataset ", cur_tile)
+            print(("Tile not included in Dataset ", cur_tile))
             
     # Give the new Dataset the same metadata as the original Dataset.
     ds_U_all.attrs = U_attrs
     ds_V_all.attrs = V_attrs 
     #%%
     
-    for key, value in ds_U_all.variables.items():
+    for key, value in list(ds_U_all.variables.items()):
         if key not in ds_U_all.coords:
             ds_U_all.variables[key].attrs['Arctic_Align'] = aca
             ds_U_all.variables[key].attrs['grid_layout'] = 'rotated llc' 
 
-    for key, value in ds_V_all.variables.items():
+    for key, value in list(ds_V_all.variables.items()):
         if key not in ds_V_all.coords:
             ds_V_all.variables[key].attrs['Arctic_Align'] = aca
             ds_V_all.variables[key].attrs['grid_layout'] = 'rotated llc'
@@ -449,11 +452,11 @@ def rotate_single_tile_Datasets_UV_points(ds_U, ds_V, **kwargs):
     # loop through each variable in the Dataset and select out for rotation 
     # only those variables that are not coordinates
     
-    print('\nROTATING TILE ', ds_U.tile.values)
+    print(('\nROTATING TILE ', ds_U.tile.values))
     
     num_vars = 0
     ki = 0
-    for key, value in ds_U.variables.items():
+    for key, value in list(ds_U.variables.items()):
         ki = ki+1
         if key not in ds_U.coords:
             

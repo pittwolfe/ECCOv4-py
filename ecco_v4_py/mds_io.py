@@ -7,17 +7,21 @@ This module includes utility routines for loading binary files in the llc 13-til
 .. _ecco_v4_py Documentation :
    https://github.com/ECCO-GROUP/ECCOv4-py
 """
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
 
 
+from past.utils import old_div
 import numpy as np
 import glob
 
-from llc_array_conversion  import llc_compact_to_tiles
-from llc_array_conversion  import llc_compact_to_faces
-from llc_array_conversion  import llc_faces_to_tiles
-from llc_array_conversion  import llc_faces_to_compact
-from llc_array_conversion  import llc_tiles_to_faces
-from llc_array_conversion  import llc_tiles_to_compact
+from .llc_array_conversion  import llc_compact_to_tiles
+from .llc_array_conversion  import llc_compact_to_faces
+from .llc_array_conversion  import llc_faces_to_tiles
+from .llc_array_conversion  import llc_faces_to_compact
+from .llc_array_conversion  import llc_tiles_to_faces
+from .llc_array_conversion  import llc_tiles_to_compact
 
 #%%
 def load_binary_array(fdir, fname, ni, nj, nk=1, nl=1, skip=0,
@@ -71,7 +75,7 @@ def load_binary_array(fdir, fname, ni, nj, nk=1, nl=1, skip=0,
     datafile = fdir + '/' + fname
 
     if less_output == False:
-        print 'loading ' + fname
+        print('loading ' + fname)
 
     # check to see if file exists.
     file = glob.glob(datafile)
@@ -99,10 +103,10 @@ def load_binary_array(fdir, fname, ni, nj, nk=1, nl=1, skip=0,
         length_arr_k = len(arr_k)
 
         # length of each 2D slice is ni * nj
-        nk = int(length_arr_k / (ni*nj))
+        nk = int(old_div(length_arr_k, (ni*nj)))
 
         if less_output == False:
-            print ('loading all 2D records.  nk =',nk)
+            print(('loading all 2D records.  nk =',nk))
 
         # reshape the array to 2D records
         if nk > 1: # we have more than one 2D record, make 3D field
@@ -137,7 +141,7 @@ def load_binary_array(fdir, fname, ni, nj, nk=1, nl=1, skip=0,
 
 
     if less_output == False:
-        print ('data shape ', data.shape)
+        print(('data shape ', data.shape))
 
     return data
 
