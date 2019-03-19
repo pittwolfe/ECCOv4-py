@@ -6,6 +6,7 @@ Created on Mon Jul  3 16:11:15 2017
 @author: ifenty
 """
 from __future__ import division
+from __future__ import print_function
 import numpy as np
 import matplotlib.pylab as plt
 import matplotlib.path as mpath
@@ -49,7 +50,7 @@ def plot_proj_to_latlon_grid(lons, lats, data,
         elif key == "cmax":
             cmax =  kwargs[key]
         else:
-            print "unrecognized argument ", key     
+            print("unrecognized argument ", key)     
 
 
 
@@ -129,15 +130,15 @@ def plot_proj_to_latlon_grid(lons, lats, data,
     else:
         raise ValueError('projection type must be either "Mercator", "PlateCaree",  "cyl", "robin", "ortho", or "stereo"')
 
-    print ('projection type ', projection_type)
+    print(('projection type ', projection_type))
     
 
     #%%
     # loop through different parts of the map to plot (if they exist), 
     # do interpolation and plot
     f = plt.gcf()
-    print len(lon_tmp_d)
-    for key, lon_tmp in lon_tmp_d.iteritems():
+    print(len(lon_tmp_d))
+    for key, lon_tmp in lon_tmp_d.items():
         
         new_grid_lon, new_grid_lat, data_latlon_projection = \
             resample_to_latlon(lons, lats, data, 
@@ -210,14 +211,14 @@ def plot_pstereo(xx,yy, data,
                             
     if isinstance(ax.projection, ccrs.NorthPolarStereo):
         ax.set_extent([-180, 180, lat_lim, 90], ccrs.PlateCarree())
-        print 'north'
+        print('north')
     elif isinstance(ax.projection, ccrs.SouthPolarStereo):
         ax.set_extent([-180, 180, -90, lat_lim], ccrs.PlateCarree())
-        print  'south'
+        print('south')
     else:
         raise ValueError('ax must be either ccrs.NorthPolarStereo or ccrs.SouthPolarStereo')
 
-    print lat_lim
+    print(lat_lim)
     
     if circle_boundary:
         theta = np.linspace(0, 2*np.pi, 100)

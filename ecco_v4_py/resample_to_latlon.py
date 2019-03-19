@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
+from __future__ import print_function
 import numpy as np
 import matplotlib.pylab as plt
 import xarray as xr
@@ -31,17 +32,17 @@ def resample_to_latlon(orig_lons, orig_lats, orig_field,
         orig_lats_1d = orig_lats.ravel()
         orig_lons_1d = orig_lons.ravel()
     else:
-        print 'orig_lons and orig_lats variable either a DataArray or numpy.ndarray'
-        print 'orig_lons found type ', type(orig_lons)
-        print 'orig_lats found type ', type(orig_lats)
+        print('orig_lons and orig_lats variable either a DataArray or numpy.ndarray')
+        print('orig_lons found type ', type(orig_lons))
+        print('orig_lats found type ', type(orig_lats))
         return
 
     if type(orig_field) == xr.core.dataarray.DataArray:
         orig_field = orig_field.values
     elif type(orig_field) != np.ndarray and \
          type(orig_field) != np.ma.core.MaskedArray :
-        print 'orig_field must be a type of DataArray, ndarray, or MaskedArray. \n'
-        print 'found type ', type(orig_field)
+        print('orig_field must be a type of DataArray, ndarray, or MaskedArray. \n')
+        print('found type ', type(orig_field))
         return
 
     # prepare for the nearest neighbor mapping
@@ -88,7 +89,7 @@ def resample_to_latlon(orig_lons, orig_lats, orig_field,
 
     else:
         print ('The number of lat and lon points to interpolate to must be > 0')
-        print ('num_lats ', num_lats,  '   num_lons ', num_lons)
+        print(('num_lats ', num_lats,  '   num_lons ', num_lons))
         new_grid_lon = []
         new_grid_lat = []
         data_latlon_projection = []

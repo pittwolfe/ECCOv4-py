@@ -9,6 +9,8 @@
 
 
 from __future__ import division
+from __future__ import print_function
+from builtins import range
 import numpy as np
 import xarray as xr
 
@@ -126,7 +128,7 @@ def llc_compact_to_faces(data_compact, less_output = False):
     llc = dims[-1]
 
     if less_output == False:
-        print('dims, num_dims, llc ', dims, num_dims, llc)
+        print(('dims, num_dims, llc ', dims, num_dims, llc))
 
     if num_dims == 2: # we have a single 2D slices (y, x)
         f1 = np.zeros((3*llc, llc))
@@ -137,8 +139,8 @@ def llc_compact_to_faces(data_compact, less_output = False):
 
         if less_output == False:
             print ('2 dimensions')
-            print('f3 shape ', f3.shape)
-            print('f5 shape ', f5.shape)
+            print(('f3 shape ', f3.shape))
+            print(('f5 shape ', f5.shape))
 
     elif num_dims == 3: # we have 3D slices (time or depth, y, x)
         nk = dims[0]
@@ -151,9 +153,9 @@ def llc_compact_to_faces(data_compact, less_output = False):
 
         if less_output == False:
             print ('3 dimensions')
-            print('nk ', nk)
-            print('f3 shape ', f3.shape)
-            print('f5 shape ', f5.shape)
+            print(('nk ', nk))
+            print(('f3 shape ', f3.shape))
+            print(('f5 shape ', f5.shape))
 
     elif num_dims == 4: # we have a 4D slice (time or depth, time or depth, y, x)
         nl = dims[0]
@@ -161,8 +163,8 @@ def llc_compact_to_faces(data_compact, less_output = False):
         
         if less_output == False:
             print ('4 dimensions')
-            print('nl, nk ', nl, nk)
-            print('f5 shape ', f5.shape)
+            print(('nl, nk ', nl, nk))
+            print(('f5 shape ', f5.shape))
 
         f1 = np.zeros((nl, nk, 3*llc, llc))
         f2 = np.zeros((nl, nk, 3*llc, llc))
@@ -179,7 +181,7 @@ def llc_compact_to_faces(data_compact, less_output = False):
     # -- 2D case
     if num_dims == 2:
         if less_output == False:
-            print ('2D, data_compact shape ', data_compact.shape)
+            print(('2D, data_compact shape ', data_compact.shape))
 
         f1 = data_compact[:3*llc,:]
         f2 = data_compact[3*llc:6*llc,:]
@@ -205,7 +207,7 @@ def llc_compact_to_faces(data_compact, less_output = False):
     elif num_dims == 3:
         # loop over k
         if less_output == False:
-            print ('3D, data_compact shape ', data_compact.shape)
+            print(('3D, data_compact shape ', data_compact.shape))
 
         for k in range(nk):
             f1[k,:] = data_compact[k,:3*llc,:]
@@ -353,7 +355,7 @@ def llc_faces_to_tiles(F, less_output=False, location_on_model_grid = 'C'):
 
     # llc is the length of the second dimension
     if less_output == False:
-        print ('data_tiles shape ', data_tiles.shape)
+        print(('data_tiles shape ', data_tiles.shape))
 
 
     # map the data from the faces format to the 13 tile arrays
@@ -457,7 +459,7 @@ def llc_tiles_to_faces(data_tiles, less_output=False):
     num_tiles = dims[0]
 
     if less_output == False:
-        print('num tiles, ', num_tiles)
+        print(('num tiles, ', num_tiles))
 
     if num_dims == 3: # we have a 13 2D slices (tile, y, x)
         f1 = np.zeros((3*llc, llc))
@@ -632,7 +634,7 @@ def llc_faces_to_compact(F, less_output=True):
         return []
 
     if less_output == False:
-        print ('shape of face 3 ', f3.shape)
+        print(('shape of face 3 ', f3.shape))
 
     if num_dims == 2:
         
@@ -652,7 +654,7 @@ def llc_faces_to_compact(F, less_output=True):
     
     elif num_dims == 3:
         # loop through k indicies
-        print ('size of data compact ', data_compact.shape)
+        print(('size of data compact ', data_compact.shape))
        
         for k in range(nk):
             data_compact[k,:3*llc,:]      = f1[k,:]
@@ -693,6 +695,6 @@ def llc_faces_to_compact(F, less_output=True):
 
 
     if less_output == False:
-        print ('shape of data_compact ', data_compact.shape)
+        print(('shape of data_compact ', data_compact.shape))
 
     return data_compact

@@ -9,6 +9,9 @@ This module includes utility routines that operate on the Dataset or DataArray O
 """
 
 from __future__ import division
+from __future__ import print_function
+from builtins import map
+from builtins import range
 import numpy as np
 import xarray as xr
 import datetime
@@ -87,7 +90,7 @@ def createShapefileFromXY(outDir, outName, X,Y,subset):
             'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]')
         f.close()
     else:
-        print "subset must be either center_points or boundary_points"
+        print("subset must be either center_points or boundary_points")
 
 
 def minimal_metadata(ds):
@@ -105,11 +108,11 @@ def minimal_metadata(ds):
         
     """
 
-    print 'Removing Dataset Attributes A-Z\n'
+    print('Removing Dataset Attributes A-Z\n')
     # generate a list of upper case letters in teh alphabet
-    myDict= map(chr, range(65, 91))
+    myDict= list(map(chr, list(range(65, 91))))
 
-    for key, value in ds.attrs.iteritems():
+    for key, value in ds.attrs.items():
         if key in myDict: 
             del ds.attrs[key]
          
@@ -150,7 +153,7 @@ def months2days(nmon=288, baseyear=1992, basemon=1):
     #center time of each month is the mean of the time bounds.    
     time_days = np.mean(time_days_bnds,axis=1)
 
-    ansi_datetmp = np.array([basetime + datetime.timedelta(days=time_days[i]) for i in xrange(nmon)])
+    ansi_datetmp = np.array([basetime + datetime.timedelta(days=time_days[i]) for i in range(nmon)])
     ansi_date = [str.replace(ansi_datetmp[i].isoformat(),'T',' ') for i in range(nmon)]
 
     return time_days, time_days_bnds, ansi_date

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 #%%
+from __future__ import print_function
+from builtins import range
 import sys
 import numpy as np
 
@@ -26,10 +28,10 @@ def extract_U_point_grid_fields_from_mitgrid_as_tiles(llc, grid_dir,
     i2=i[llc*1:llc+llc*1]
     i3=i[llc*2:llc+llc*2]
 
-    print i1.shape, i2.shape, i3.shape
-    print i1[0:3], i1[-3:]
-    print i2[0:3], i2[-3:]
-    print i3[0:3], i3[-3:]
+    print(i1.shape, i2.shape, i3.shape)
+    print(i1[0:3], i1[-3:])
+    print(i2[0:3], i2[-3:])
+    print(i3[0:3], i3[-3:])
     
     DXC = {}
     DYG = {}
@@ -81,7 +83,7 @@ def extract_U_point_grid_fields_from_mitgrid_as_tiles(llc, grid_dir,
         i1=i[llc*0  :llc+llc*0]
         i2=i[llc*1:llc+llc*1]
         i3=i[llc*2:llc+llc*2]
-        print mg4['DYC'].shape
+        print(mg4['DYC'].shape)
         
         DXC[8]  = mg4['DYC'][np.ix_(i1,np.arange(91))]
         DXC[9]  = mg4['DYC'][np.ix_(i2,np.arange(91))]
@@ -151,8 +153,8 @@ def extract_U_point_grid_fields_from_mitgrid_as_tiles(llc, grid_dir,
         DXC = DXC_arr
         DYG = DYG_arr 
     
-        print DYG.shape
-        print DXC.shape
+        print(DYG.shape)
+        print(DXC.shape)
         
         plt.figure(1);plt.clf();
         ecco.plot_tiles(DXC,layout='latlon')
@@ -182,10 +184,10 @@ def extract_G_point_grid_fields_from_mitgrid_as_tiles(llc, grid_dir):
     i2=i[llc*1:llc+llc*1+1]
     i3=i[llc*2:llc+llc*2+1]
     
-    print i1.shape, i2.shape, i3.shape
-    print i1[0:3], i1[-3:]
-    print i2[0:3], i2[-3:]
-    print i3[0:3], i3[-3:]
+    print(i1.shape, i2.shape, i3.shape)
+    print(i1[0:3], i1[-3:])
+    print(i2[0:3], i2[-3:])
+    print(i3[0:3], i3[-3:])
     
     # TILE 1
     mg1 = sg.gridio.read_mitgridfile(grid_dir + '/' + tile1_name,
@@ -284,9 +286,9 @@ if __name__ == '__main__':
     lat_name = 'latitude'
     
     ds = xr.Dataset({'RAZ': (['tile','j_g','i_g'], RAZ)}, 
-                    coords={'tile': range(1,14),
-                            'j_g': (('j_g',), range(1,92), {'axis':'Y',}),
-                            'i_g': (('i_g',), range(1,92), {'axis':'X',}),
+                    coords={'tile': list(range(1,14)),
+                            'j_g': (('j_g',), list(range(1,92)), {'axis':'Y',}),
+                            'i_g': (('i_g',), list(range(1,92)), {'axis':'X',}),
                             lon_name : (('tile','j_g','i_g'), XG),
                             lat_name : (('tile','j_g','i_g'), YG)})
     
@@ -342,9 +344,9 @@ if __name__ == '__main__':
     
     dsu = xr.Dataset({'DXC': (['tile','j_u','i_u'], DXC),
                       'DYG': (['tile','j_u','i_u'], DYG)},
-                    coords={'tile': range(1,14),
-                            'j_u':   (('j_u',  ), range(1,91), {'axis':'Y',}),
-                            'i_u': (('i_u',), range(1,92), {'axis':'X',})})
+                    coords={'tile': list(range(1,14)),
+                            'j_u':   (('j_u',  ), list(range(1,91)), {'axis':'Y',}),
+                            'i_u': (('i_u',), list(range(1,92)), {'axis':'X',})})
     
     dsu['i_u'].attrs['standard_name'] = 'i index of llc U-point'
     dsu['i_u'].attrs['long_name'] = 'i index of llc U-point'

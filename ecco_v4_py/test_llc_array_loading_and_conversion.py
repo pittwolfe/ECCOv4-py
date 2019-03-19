@@ -6,22 +6,26 @@ Created on Wed Jan 23 15:13:33 2019
 @author: ifenty
 """
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
+from builtins import input
+from builtins import range
 import numpy as np
 import matplotlib.pylab as plt
 
-from llc_array_conversion  import llc_compact_to_tiles
-from llc_array_conversion  import llc_compact_to_faces
-from llc_array_conversion  import llc_faces_to_tiles
-from llc_array_conversion  import llc_faces_to_compact
-from llc_array_conversion  import llc_tiles_to_faces
-from llc_array_conversion  import llc_tiles_to_compact
+from .llc_array_conversion  import llc_compact_to_tiles
+from .llc_array_conversion  import llc_compact_to_faces
+from .llc_array_conversion  import llc_faces_to_tiles
+from .llc_array_conversion  import llc_faces_to_compact
+from .llc_array_conversion  import llc_tiles_to_faces
+from .llc_array_conversion  import llc_tiles_to_compact
 
 
-from mds_io import load_llc_compact
-from mds_io import load_llc_compact_to_faces
-from mds_io import load_llc_compact_to_tiles
-from tile_plot import plot_tiles
+from .mds_io import load_llc_compact
+from .mds_io import load_llc_compact_to_faces
+from .mds_io import load_llc_compact_to_tiles
+from .tile_plot import plot_tiles
 
 
 # Tests the mds_io and llc_array_conversion routines
@@ -91,7 +95,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     
         plot_tiles(tmpXC_t)
         plt.draw()
-        raw_input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
     
     #%% 1b CONVERT COMPACT TO FACES, TILES
@@ -101,7 +105,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
 
     for f in range(1,6):
         tmp = np.unique(tmpXC_f[f] - tmpXC_cf[f])
-        print ('unique diffs CF ', f, tmp)
+        print(('unique diffs CF ', f, tmp))
 
         if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
@@ -109,7 +113,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
             return TEST_RESULT
 
     tmp = np.unique(tmpXC_ct - tmpXC_t)
-    print ('unique diffs for CT ', tmp)
+    print(('unique diffs for CT ', tmp))
 
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
@@ -124,7 +128,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     
     # unique diff tests    
     tmp = np.unique(tmpXC_t - tmpXC_ft)
-    print ('unique diffs for FT ', tmp)
+    print(('unique diffs for FT ', tmp))
 
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
@@ -133,7 +137,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     
     
     tmp = np.unique(tmpXC_fc - tmpXC_c)
-    print ('unique diffs FC', tmp )
+    print(('unique diffs FC', tmp ))
 
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
@@ -148,7 +152,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     # unique diff tests    
     for f in range(1,6):
         tmp = np.unique(tmpXC_f[f] - tmpXC_tf[f])
-        print ('unique diffs for TF ', f, tmp)
+        print(('unique diffs for TF ', f, tmp))
         
         if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
@@ -157,7 +161,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
         
     
     tmp = np.unique(tmpXC_tc - tmpXC_c)
-    print ('unique diffs TC', tmp)
+    print(('unique diffs TC', tmp))
     
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
@@ -170,7 +174,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     tmpXC_cftfc = llc_faces_to_compact(llc_tiles_to_faces(llc_faces_to_tiles(llc_compact_to_faces(tmpXC_c))))
     tmp = np.unique(tmpXC_cftfc - tmpXC_c)
     
-    print ('unique diffs CFTFC', tmp)
+    print(('unique diffs CFTFC', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
         print ('failed on 1e')
@@ -192,7 +196,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
         plot_tiles(tmpHF_t[:,0,:])
         plot_tiles(tmpHF_t[:,20,:])
         plt.draw()
-        raw_input("Press Enter to continue...")
+        input("Press Enter to continue...")
     
     #%% 2b CONVERT COMPACT TO FACES, TILES
     tmpHF_cf = llc_compact_to_faces(tmpHF_c)
@@ -201,7 +205,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
     # unique diff tests    
     for f in range(1,6):
         tmp = np.unique(tmpHF_f[f] - tmpHF_cf[f])
-        print ('unique diffs CF ', f, tmp)
+        print(('unique diffs CF ', f, tmp))
         if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
             print ('failed on 2b-1')
@@ -209,7 +213,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
         
 
     tmp =  np.unique(tmpHF_ct - tmpHF_t)
-    print ('unique diffs CT ', tmp)
+    print(('unique diffs CT ', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
         print ('failed on 2b-2')
@@ -221,7 +225,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
                 plt.figure()
                 plt.imshow(tmpHF_cf[f][k,:], origin='lower');plt.colorbar()    
         plt.draw()
-        raw_input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
     #%% 2c CONVERT FACES TO TILES, COMPACT
     tmpHF_ft = llc_faces_to_tiles(tmpHF_f)
@@ -232,18 +236,18 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
         plot_tiles(tmpHF_ft[:,0,:])
         plot_tiles(tmpHF_ft[:,20,:])
         plt.draw()
-        raw_input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
     # unique diff tests    
     tmp = np.unique(tmpHF_t - tmpHF_ft)
-    print ('unique diffs FT ', tmp)
+    print(('unique diffs FT ', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
         print ('failed on 2c-1')
         return TEST_RESULT
 
     tmp = np.unique(tmpHF_fc - tmpHF_c)
-    print ('unique diffs FC', tmp)
+    print(('unique diffs FC', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
         TEST_RESULT = 0
         print ('failed on 2c-2')
@@ -261,20 +265,20 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
                 plt.figure()
                 plt.imshow(tmpHF_tf[f][k,:], origin='lower');plt.colorbar()    
         plt.draw()
-        raw_input("Press Enter to continue...")
+        input("Press Enter to continue...")
 
 
     # unique diff tests    
     for f in range(1,6):
         tmp = np.unique(tmpHF_f[f] - tmpHF_tf[f])
-        print ('unique diffs TF ', f, tmp)
+        print(('unique diffs TF ', f, tmp))
         if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
             print ('failed on 2d-1')
             return TEST_RESULT
             
     tmp = np.unique(tmpHF_tc - tmpHF_c)
-    print ('unique diffs TC ', tmp)
+    print(('unique diffs TC ', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
             print ('failed on 2d-1')
@@ -288,7 +292,7 @@ def run_mds_io_and_llc_conversion_test(llc_grid_dir, llc_lons_fname='XC.data',
 
     tmp = np.unique(tmpHF_cftfc - tmpHF_c)
 
-    print ('unique diffs CFTFC ', tmp)
+    print(('unique diffs CFTFC ', tmp))
     if len(tmp) != 1 or tmp[0] != 0:
             TEST_RESULT = 0
             print ('failed on 2e')
